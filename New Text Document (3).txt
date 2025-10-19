@@ -1,0 +1,63 @@
+Client:
+Hi, how are you today? Good, good, good. Always glad to hear that.
+Hang on, let me get this volume fixed… okay. All righty.
+
+Okay, now the reason why I wanted to use Zoom was because I just got through giving somebody else the same overview, and they didn’t really want to listen — they wanted to text a lot. And, you know, it wasn’t really the best way to go about it. I wanted to explain it better this time.
+
+Now, this project — it’s gonna take a while to do. You’re aware of that, right?
+Okay, because I had no intent on rushing this thing.
+
+Um, there are two types of codes. A regular code that you use when you want to check, and it pulls back all the information — for that particular stock, let’s say from NYSE overall, or Nasdaq. And you can either use a dollar sign in their code or there’s another code built in as well.
+
+And really what I wanted to be built was this: you put the code in, and the first thing it’s going to do is modern portfolio analysis. It’s going to go out there, and by using — uh, I’m going to help you with this too — by using bottom port… thing with the options, and same thing with Forex as well. Okay? And that’s pretty much it right there.
+
+Now, is this something that you can do?
+Yes, but okay — but I have to do a little bit more research and find a way to, uh, find the criteria for modern portfolio on that as well, too.
+Right, and that’s fine. Because I really want to apply that university-level model to options and Forex.
+
+Uh, so this is going to go back to being a hybrid quantum algorithm for this because we have to use hybrid — some of the classical stuff works better than quantum does, but the quantum gives you a faster pullback on it. And that’s what’s going to make it special, using that quantum part.
+
+So yeah, we’ll use quantum algorithms to be able to solve stuff faster. Sound interesting?
+Okay, good, fantastic.
+
+Now, what I was going to do for payment was this — because that’s the reason why you’re here.
+Half up front, and then half when you complete the section.
+So we’ll do it section by section, and once you tell me it’s done, I’ll go back, look at it, make sure it works, and then I’ll pay you the balance. How’s that?
+
+Oh, may I ask — where do you live?
+What country?
+Argentina? Okay, that’s perfect then. Because I put this on the same time zone, or real close to it then. Okay, fantastic.
+
+Now, do you understand about quantum?
+Have you ever discussed that before?
+You have? Okay, so you know what I’m talking about when I say using the quantum.
+
+Okay, good. Now, that outline essentially gives you a good idea of what I was thinking about. It’s an outline — doesn’t mean it’s set in gold — but that’s the route we need to take to get it to work properly.
+
+I’m not in a hurry to get this done. So this isn’t something that’s gonna, you know, tear up your whole life or take all your time. I don’t want you working every day, day in and day out. There’s no need for that.
+
+The last person I tried to do this with — they wanted to work all the time, and I didn’t want to.
+
+I can’t pay six thousand dollars, I can’t pay thirty thousand. But we’ll pay as we go. We just keep at it until it’s running the way it should.
+
+Okay, so how much were you looking for?
+
+(You respond.)
+
+Okay, how long does it take you normally to get through something like this? Thirty dollars an hour, okay. I was thinking like, uh, a session — maybe between four hundred and five hundred a session. I feel like that’s fair. That’ll take care of getting it through.
+
+Because I already got the first thing done, and now we need to go to the second. And right now, I just want to go ahead and build up the interface for what I want.
+
+Does that make sense, what I told you earlier?
+
+Because I also want to go ahead and bring in some of the other stuff I did before in the past, because it’s already written up and it was going through there.
+
+So you go into a certain stock exchange — we’ll just use New York because it’s easy to understand — and then you’d pick the category we’re concerned about, we’ll say energy.
+
+So I want to go into New York, pick energy, and then I want you to find, like, 15 stocks that are going to be high return and low risk.
+
+And then I’ll have stuff in there where you can find standard deviations, and stuff like that, and then get those 15, pull them back, make sure they meet efficient market and modern portfolio theory.
+
+And then from there, we just go ahead and put in the next layer.
+
+Okay, yeah, yeah. This works a lot better, because I can hear you clearly, no background noise, and it’s just a good connection. So that’s fine for me. Okay?
