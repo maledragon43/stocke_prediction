@@ -278,6 +278,33 @@ class StockPredictionWebApp:
         
         return sorted(list(stocks))
     
+    def create_demo_data(self, stock_symbol="DEMO"):
+        """Create demo data for visualization when no real models exist"""
+        # Generate demo stock data
+        dates = pd.date_range(start='2023-01-01', end='2024-01-15', freq='D')
+        np.random.seed(42)  # For reproducible demo data
+        
+        # Generate realistic stock price data
+        base_price = 100
+        returns = np.random.normal(0.001, 0.02, len(dates))  # Daily returns
+        prices = [base_price]
+        for ret in returns[1:]:
+            prices.append(prices[-1] * (1 + ret))
+        
+        demo_data = pd.Series(prices, index=dates)
+        
+        # Generate demo predictions
+        demo_predictions = {
+            'lstm': demo_data.iloc[-1] * (1 + np.random.normal(0.01, 0.02)),
+            'lgbm': demo_data.iloc[-1] * (1 + np.random.normal(0.005, 0.015)),
+            'xgb': demo_data.iloc[-1] * (1 + np.random.normal(0.008, 0.018)),
+            'future_predictions': [
+                demo_data.iloc[-1] * (1 + np.random.normal(0.01, 0.02)) for _ in range(5)
+            ]
+        }
+        
+        return demo_data, demo_predictions
+    
     def make_predictions(self, stock_symbol, start_date, end_date, n_days=5):
         """Make predictions using loaded models"""
         if not self.model_loader.loaded_models:
@@ -378,16 +405,26 @@ class StockPredictionWebApp:
             available_stocks = self.get_available_stocks()
             
             if not available_stocks:
-                st.error("❌ No saved models found!")
-                st.info("Please run the training script first to create models.")
-                return
-            
-            # Stock selection
-            selected_stock = st.selectbox(
-                "Select Stock Symbol",
-                available_stocks,
-                help="Choose a stock that has saved models"
-            )
+                st.warning("⚠️ No saved models found!")
+                st.info("💡 **Demo Mode Available** - You can view demo predictions and graphs to see how the system works.")
+                st.info("📝 To use real models, run: `python stock_prediction_with_saved_models.py`")
+                
+                # Add demo option
+                use_demo = st.checkbox("🎭 Show Demo Data", value=True, help="Display demo predictions and graphs")
+                if use_demo:
+                    st.session_state.demo_mode = True
+                    st.session_state.selected_stock = "DEMO"
+                else:
+                    st.session_state.demo_mode = False
+                    return
+            else:
+                st.session_state.demo_mode = False
+                # Stock selection
+                selected_stock = st.selectbox(
+                    "Select Stock Symbol",
+                    available_stocks,
+                    help="Choose a stock that has saved models"
+                )
             
             # Date range
             st.subheader("📅 Date Range")
@@ -422,7 +459,28 @@ class StockPredictionWebApp:
                         st.session_state.models_loaded = False
         
         # Main content
-        if st.session_state.get('models_loaded', False):
+        if st.session_state.get('demo_mode', False):
+            # Demo mode - show demo data
+            st.warning("🎭 **DEMO MODE** - Showing sample data and predictions")
+            st.info("This is demo data to show how the system works. To use real models, train them first.")
+            
+            if st.button("🎭 Show Demo Predictions", type="primary"):
+                with st.spinner("Generating demo data..."):
+                    demo_data, demo_predictions = self.create_demo_data("DEMO")
+                    demo_results = {
+                        'predictions': demo_predictions,
+                        'stock_data': demo_data,
+                        'prices': demo_data.values
+                    }
+                    st.session_state.prediction_results = demo_results
+                    st.session_state.demo_mode = True
+                    st.success("✅ Demo predictions generated!")
+            
+            # Display demo results
+            if st.session_state.get('prediction_results'):
+                self.display_demo_results(st.session_state.prediction_results, n_days)
+                
+        elif st.session_state.get('models_loaded', False):
             st.success(f"✅ Models loaded for {st.session_state.get('selected_stock', 'Unknown')}")
             
             # Make predictions
@@ -445,7 +503,8 @@ class StockPredictionWebApp:
             if st.session_state.get('prediction_results'):
                 self.display_results(st.session_state.prediction_results, n_days)
         else:
-            st.info("👈 Please select a stock and load models from the sidebar")
+            if not st.session_state.get('demo_mode', False):
+                st.info("👈 Please select a stock and load models from the sidebar")
     
     def display_results(self, results, n_days):
         """Display prediction results with visualizations"""
@@ -523,6 +582,135 @@ class StockPredictionWebApp:
             hovermode='x unified'
         )
         st.plotly_chart(historical_fig, use_container_width=True)
+    
+    def display_demo_results(self, results, n_days):
+        """Display demo prediction results with visualizations"""
+        predictions = results['predictions']
+        stock_data = results['stock_data']
+        prices = results['prices']
+        
+        # Demo mode warning
+        st.warning("🎭 **DEMO MODE** - This is sample data for demonstration purposes")
+        st.info("💡 To use real models, run: `python stock_prediction_with_saved_models.py`")
+        
+        st.header("📊 Demo Prediction Results")
+        
+        # Model predictions comparison
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.subheader("🎯 Demo Model Predictions")
+            pred_df = pd.DataFrame([
+                {"Model": model.upper(), "Predicted Price": f"${pred:.2f}"}
+                for model, pred in predictions.items()
+                if model != 'future_predictions' and isinstance(pred, (int, float))
+            ])
+            st.dataframe(pred_df, use_container_width=True)
+            st.caption("📝 *These are demo predictions - not real model outputs*")
+        
+        with col2:
+            st.subheader("📈 Demo Model Comparison")
+            comparison_fig = self.visualizer.create_model_comparison_plot(
+                predictions, "DEMO"
+            )
+            st.plotly_chart(comparison_fig, use_container_width=True)
+            st.caption("📝 *Demo comparison chart*")
+        
+        # Future predictions
+        if 'future_predictions' in predictions:
+            st.subheader("🔮 Demo Future Predictions")
+            future_preds = predictions['future_predictions']
+            
+            col1, col2 = st.columns(2)
+            with col1:
+                st.write(f"**Next {n_days} days demo predictions:**")
+                for i, pred in enumerate(future_preds, 1):
+                    st.write(f"Day {i}: ${pred:.2f}")
+                st.caption("📝 *These are demo future predictions*")
+            
+            with col2:
+                future_fig = self.visualizer.create_future_prediction_plot(
+                    prices[-30:], future_preds, "DEMO", n_days
+                )
+                st.plotly_chart(future_fig, use_container_width=True)
+                st.caption("📝 *Demo future prediction chart*")
+        
+        # Demo performance metrics
+        st.subheader("📊 Demo Performance Metrics")
+        demo_metrics = {
+            'LSTM RMSE': 2.45,
+            'LSTM MAE': 1.89,
+            'LSTM R²': 0.87,
+            'LGBM RMSE': 2.12,
+            'LGBM MAE': 1.67,
+            'LGBM R²': 0.91,
+            'XGBoost RMSE': 2.08,
+            'XGBoost MAE': 1.63,
+            'XGBoost R²': 0.92
+        }
+        
+        metrics_df = pd.DataFrame([
+            {"Metric": metric, "Value": f"{value:.4f}"}
+            for metric, value in demo_metrics.items()
+        ])
+        st.dataframe(metrics_df, use_container_width=True)
+        st.caption("📝 *These are demo performance metrics*")
+        
+        # Demo model parameters
+        st.subheader("⚙️ Demo Model Parameters")
+        with st.expander("View Demo Model Parameters"):
+            demo_params = {
+                "LSTM": {
+                    "epochs": 50,
+                    "batch_size": 32,
+                    "units": 50,
+                    "dropout": 0.2
+                },
+                "LGBM": {
+                    "n_estimators": 100,
+                    "learning_rate": 0.1,
+                    "max_depth": 6,
+                    "num_leaves": 31
+                },
+                "XGBoost": {
+                    "n_estimators": 100,
+                    "learning_rate": 0.1,
+                    "max_depth": 6,
+                    "subsample": 0.8
+                }
+            }
+            st.json(demo_params)
+        st.caption("📝 *These are demo model parameters*")
+        
+        # Demo historical data plot
+        st.subheader("📈 Demo Historical Price Data")
+        historical_fig = go.Figure()
+        historical_fig.add_trace(go.Scatter(
+            x=stock_data.index,
+            y=stock_data.values,
+            name="Demo Historical Prices",
+            line=dict(color='blue', width=2)
+        ))
+        historical_fig.update_layout(
+            title="DEMO Stock Historical Prices (Sample Data)",
+            xaxis_title="Date",
+            yaxis_title="Price ($)",
+            hovermode='x unified'
+        )
+        st.plotly_chart(historical_fig, use_container_width=True)
+        st.caption("📝 *This is demo historical price data*")
+        
+        # Instructions for real usage
+        st.subheader("🚀 How to Use Real Models")
+        st.info("""
+        **To use real models instead of demo data:**
+        
+        1. **Train Models:** Run `python stock_prediction_with_saved_models.py`
+        2. **Load Models:** Use the sidebar to select trained models
+        3. **View Results:** Get real predictions and performance metrics
+        
+        **The demo shows you exactly what the real system will look like!**
+        """)
 
 def main():
     """Main function to run the web application"""

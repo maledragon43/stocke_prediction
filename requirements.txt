@@ -1,0 +1,36 @@
+# Stock Prediction System - Required Packages
+# Install with: pip install -r requirements.txt
+
+# Core Data Science Libraries
+pandas>=1.5.0
+numpy>=1.21.0
+scikit-learn>=1.1.0
+
+# Machine Learning Libraries
+tensorflow>=2.10.0
+lightgbm>=3.3.0
+xgboost>=1.6.0
+
+# Financial Data Libraries
+yfinance>=0.2.0
+pandas-datareader>=0.10.0
+
+# Web Interface
+streamlit>=1.25.0
+
+# Visualization Libraries
+plotly>=5.15.0
+matplotlib>=3.5.0
+
+# HTTP Requests
+requests>=2.28.0
+
+# Portfolio Optimization
+PyPortfolioOpt>=1.5.0
+
+# Hyperparameter Optimization
+hyperopt>=0.2.7
+
+# Additional Utilities
+python-dateutil>=2.8.0
+pytz>=2022.1
